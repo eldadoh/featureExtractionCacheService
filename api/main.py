@@ -99,14 +99,14 @@ app = FastAPI(
     High-performance, production-ready API for SIFT feature detection in images.
     
     ### Features
-    - 🚀 **Async Processing**: Handles concurrent requests efficiently
-    - 💾 **Intelligent Caching**: Redis-based result caching (1-hour TTL)
-    - 📊 **SIFT Algorithm**: Robust keypoint and descriptor extraction
-    - 🔍 **Image Preprocessing**: Non-local means denoising
-    - ⚡ **Fast Response**: Sub-second processing for most images
-    - 🛡️ **Error Handling**: Comprehensive validation and error messages
-    - 📝 **Structured Logging**: JSON logs with correlation IDs
-    - 💪 **Production Ready**: Docker, health checks, monitoring
+    - **Async Processing**: Handles concurrent requests efficiently
+    - **Intelligent Caching**: Redis-based result caching (1-hour TTL)
+    - **SIFT Algorithm**: Robust keypoint and descriptor extraction
+    - **Image Preprocessing**: Non-local means denoising
+    - **Fast Response**: Sub-second processing for most images
+    - **Error Handling**: Comprehensive validation and error messages
+    - **Structured Logging**: JSON logs with correlation IDs
+    - **Production Ready**: Docker, health checks, monitoring
     
     ### Supported Formats
     JPG, JPEG, PNG, BMP, TIF, TIFF

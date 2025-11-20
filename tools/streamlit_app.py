@@ -8,6 +8,7 @@ import asyncio
 import redis
 import json
 import time
+import re
 from pathlib import Path
 from typing import Dict, Any, List
 import subprocess
@@ -18,7 +19,7 @@ API_URL = "http://localhost:8000"
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 
-st.set_page_config(page_title="Feature Detection Dashboard", layout="wide", page_icon="🔍")
+st.set_page_config(page_title="Feature Detection Dashboard", layout="wide")
 
 # Redis connection helper
 @st.cache_resource
@@ -48,19 +49,17 @@ async def detect_features(image_path: str, api_url: str) -> Dict[str, Any]:
                 return {"error": response.text, "status_code": response.status_code}
 
 def get_redis_stats(client) -> Dict[str, Any]:
-    """Get Redis statistics"""
+    """
+    Get Redis statistics.
+    """
     if not client:
         return {}
     try:
         info = client.info()
+        
         return {
-            "connected_clients": info.get('connected_clients', 0),
             "used_memory_human": info.get('used_memory_human', 'N/A'),
             "total_keys": client.dbsize(),
-            "hit_rate": info.get('keyspace_hits', 0) / max(info.get('keyspace_hits', 0) + info.get('keyspace_misses', 1), 1),
-            "hits": info.get('keyspace_hits', 0),
-            "misses": info.get('keyspace_misses', 0),
-            "uptime_seconds": info.get('uptime_in_seconds', 0),
         }
     except Exception as e:
         return {"error": str(e)}
@@ -88,11 +87,11 @@ def get_redis_value(client, key: str) -> Any:
         return {"error": str(e)}
 
 # Streamlit UI
-st.title("🔍 Feature Detection API Dashboard")
+st.title("Feature Detection API Dashboard")
 st.markdown("---")
 
 # Tabs for different functionalities
-tab1, tab2, tab3, tab4 = st.tabs(["📸 Single Image", "🚀 Batch Demo", "💾 Redis Browser", "📊 Logs & Stats"])
+tab1, tab2, tab3, tab4 = st.tabs(["Single Image", "Batch", "Redis Browser", "Docker Logs"])
 
 # Tab 1: Single Image Detection
 with tab1:
@@ -106,7 +105,7 @@ with tab1:
         if uploaded_file:
             st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
             
-            if st.button("🔍 Detect Features", key="single"):
+            if st.button("Detect Features", key="single"):
                 # Save temporarily
                 temp_path = f"/tmp/{uploaded_file.name}"
                 with open(temp_path, 'wb') as f:
@@ -116,7 +115,7 @@ with tab1:
                     result = asyncio.run(detect_features(temp_path, API_URL))
                 
                 if "error" not in result:
-                    st.success("✅ Detection Complete!")
+                    st.success("Detection Complete!")
                     
                     # Display results
                     with col2:
@@ -124,7 +123,7 @@ with tab1:
                         st.metric("Descriptors Shape", str(result.get('descriptors_shape', 'N/A')))
                         
                         cached = result.get('cached', False)
-                        cache_status = "🟢 CACHE HIT" if cached else "🔴 CACHE MISS"
+                        cache_status = "CACHE HIT" if cached else "CACHE MISS"
                         st.metric("Cache Status", cache_status)
                         
                         st.metric("Processing Time (ms)", f"{result.get('processing_time_ms', 0):.2f}")
@@ -146,23 +145,55 @@ with tab2:
             images = list(data_dir.glob('*.tif')) + list(data_dir.glob('*.png')) + list(data_dir.glob('*.bmp'))
             
             num_images = st.slider("Number of images", 1, len(images), min(3, len(images)))
-            num_runs = st.slider("Runs per image", 1, 20, 2)
+            num_runs = st.slider("Runs per image", 1, 20, 5)
             
-            if st.button("🚀 Run Batch Demo", key="batch"):
-                with st.spinner("Running batch processing..."):
-                    result = subprocess.run(
-                        [sys.executable, 'tools/demo_api.py', '--runs', str(num_runs)],
-                        capture_output=True,
-                        text=True
+            if st.button("Run Batch", key="batch"):
+                with col2:
+                    st.subheader("Output:")
+                    
+                    # Create placeholder for streaming output
+                    output_placeholder = st.empty()
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
+                    
+                    output_lines = []
+                    
+                    # Run subprocess with streaming output (unbuffered)
+                    process = subprocess.Popen(
+                        [sys.executable, '-u', 'tools/demo_api.py', '--runs', str(num_runs)],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.STDOUT,
+                        text=True,
+                        bufsize=1,
+                        universal_newlines=True
                     )
                     
-                    with col2:
-                        st.subheader("Output:")
-                        st.code(result.stdout, language='text')
+                    # Stream output line by line
+                    total_operations = len(images) * num_runs
+                    completed = 0
+                    
+                    for line in process.stdout:
+                        output_lines.append(line)
                         
-                        if result.stderr:
-                            st.error("Errors:")
-                            st.code(result.stderr, language='text')
+                        # Update progress based on actual processing lines (status icons indicate completion)
+                        if "ms" in line and ("|" in line or "Time:" in line):
+                            completed += 1
+                            progress = min(completed / total_operations, 1.0)
+                            progress_bar.progress(progress)
+                            status_text.text(f"Processing: {completed}/{total_operations} images")
+                        
+                        # Update output display with last 100 lines for context
+                        output_placeholder.code(''.join(output_lines[-100:]), language='text')
+                    
+                    process.wait()
+                    
+                    # Final update
+                    progress_bar.progress(1.0)
+                    status_text.text(f"Completed {total_operations} operations!")
+                    output_placeholder.code(''.join(output_lines), language='text')
+                    
+                    if process.returncode != 0:
+                        st.error(f"Process exited with code {process.returncode}")
         else:
             st.warning(f"Data directory not found: {data_dir}")
 
@@ -176,29 +207,25 @@ with tab3:
         col1, col2 = st.columns([1, 2])
         
         with col1:
-            st.subheader("📊 Redis Stats")
+            st.subheader("Redis Stats")
             stats = get_redis_stats(redis_client)
             
             if "error" not in stats:
                 st.metric("Total Keys", stats.get('total_keys', 0))
                 st.metric("Memory Used", stats.get('used_memory_human', 'N/A'))
-                st.metric("Connected Clients", stats.get('connected_clients', 0))
-                st.metric("Cache Hit Rate", f"{stats.get('hit_rate', 0):.2%}")
-                st.metric("Hits", stats.get('hits', 0))
-                st.metric("Misses", stats.get('misses', 0))
-                st.metric("Uptime (seconds)", stats.get('uptime_seconds', 0))
             else:
                 st.error(f"Error: {stats['error']}")
             
             # Clear cache button
-            if st.button("🗑️ Clear All Cache"):
-                if st.checkbox("Confirm deletion"):
-                    redis_client.flushdb()
-                    st.success("Cache cleared!")
-                    st.rerun()
+            st.markdown("---")
+            confirm_clear = st.checkbox("I want to clear all cache", key="confirm_clear")
+            if st.button("Clear All Cache", disabled=not confirm_clear, type="primary"):
+                redis_client.flushdb()
+                st.success("Cache cleared! Refreshing...")
+                st.rerun()
         
         with col2:
-            st.subheader("🔑 Cached Keys")
+            st.subheader("Cached Keys")
             
             pattern = st.text_input("Key pattern", "features:*")
             keys = get_redis_keys(redis_client, pattern)
@@ -216,79 +243,126 @@ with tab3:
                         
                         ttl = redis_client.ttl(selected_key)
                         if ttl > 0:
-                            st.info(f"⏰ TTL: {ttl} seconds")
+                            st.info(f"TTL: {ttl} seconds")
                         elif ttl == -1:
-                            st.info("⏰ TTL: No expiration")
+                            st.info("TTL: No expiration")
                         
-                        if st.button(f"🗑️ Delete {selected_key}"):
+                        if st.button(f"Delete {selected_key}"):
                             redis_client.delete(selected_key)
                             st.success("Key deleted!")
                             st.rerun()
             else:
                 st.info("No keys found matching pattern")
     else:
-        st.error("❌ Cannot connect to Redis. Make sure Redis is running.")
+        st.error("Cannot connect to Redis. Make sure Redis is running.")
 
-# Tab 4: Logs & Stats
+# Tab 4: Docker Logs
 with tab4:
-    st.header("API Logs & Statistics")
+    st.header("Docker Container Logs")
     
-    col1, col2 = st.columns([1, 1])
+    # Docker Logs Section
+    st.subheader("Container Logs")
+    
+    col1, col2, col3, col4 = st.columns([2, 2, 2, 1])
     
     with col1:
-        st.subheader("🏥 Health Check")
-        try:
-            response = httpx.get(f"{API_URL}/health", timeout=5.0)
-            if response.status_code == 200:
-                health = response.json()
-                st.success("✅ API is healthy")
-                st.json(health)
-            else:
-                st.error(f"❌ API unhealthy: {response.status_code}")
-        except Exception as e:
-            st.error(f"❌ API not reachable: {e}")
+        service = st.selectbox(
+            "Service",
+            ["api", "redis", "both"],
+            help="Select which service logs to view"
+        )
     
     with col2:
-        st.subheader("📝 Recent Docker Logs")
-        
-        if st.button("🔄 Refresh Logs"):
-            result = subprocess.run(
-                ['docker', 'compose', 'logs', '--tail=50', 'api'],
-                capture_output=True,
-                text=True
-            )
-            
-            if result.returncode == 0:
-                st.code(result.stdout, language='text')
-            else:
-                st.error("Could not fetch logs. Make sure Docker Compose is running.")
+        num_lines = st.selectbox(
+            "Number of lines",
+            [50, 100, 200, 500, 1000],
+            index=0,
+            help="How many recent log lines to show"
+        )
     
-    st.markdown("---")
+    with col3:
+        show_timestamps = st.checkbox("Show Docker timestamps", value=False, help="Add Docker container timestamps (application logs already include timestamps)")
     
-    # Redis stats in this tab too
-    redis_client = get_redis_client()
-    if redis_client:
-        st.subheader("💾 Cache Performance")
-        
-        stats = get_redis_stats(redis_client)
-        
-        col1, col2, col3, col4 = st.columns(4)
+    with col4:
+        if st.button("Refresh", use_container_width=True):
+            st.rerun()
+    
+    # Build docker compose logs command
+    cmd = ['docker', 'compose', 'logs', f'--tail={num_lines}']
+    
+    if show_timestamps:
+        cmd.append('--timestamps')
+    
+    # Add service(s)
+    if service != "both":
+        cmd.append(service)
+    
+    # Execute command
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    
+    if result.returncode == 0:
+        # Add log filtering options
+        col1, col2 = st.columns([3, 1])
         
         with col1:
-            st.metric("Total Keys", stats.get('total_keys', 0))
+            filter_text = st.text_input(
+                "Filter logs (regex supported)",
+                placeholder="e.g., error, POST, status_code, etc.",
+                help="Filter logs by text or regex pattern"
+            )
+        
         with col2:
-            st.metric("Cache Hits", stats.get('hits', 0))
-        with col3:
-            st.metric("Cache Misses", stats.get('misses', 0))
-        with col4:
-            st.metric("Hit Rate", f"{stats.get('hit_rate', 0):.2%}")
+            log_level_filter = st.selectbox(
+                "Level",
+                ["All", "ERROR", "WARNING", "INFO", "DEBUG"],
+                help="Filter by log level"
+            )
+        
+        # Process and filter logs (apply both filters correctly)
+        logs = result.stdout
+        log_lines = logs.split('\n')
+        
+        # Apply filters
+        if filter_text or log_level_filter != "All":
+            filtered_lines = []
+            
+            for line in log_lines:
+                # Text filter
+                if filter_text:
+                    try:
+                        if not re.search(filter_text, line, re.IGNORECASE):
+                            continue
+                    except re.error:
+                        st.warning(f"Invalid regex pattern: {filter_text}")
+                        break
+                
+                # Log level filter
+                if log_level_filter != "All":
+                    if log_level_filter.lower() not in line.lower():
+                        continue
+                
+                # Line passed all filters
+                filtered_lines.append(line)
+            
+            logs = '\n'.join(filtered_lines)
+        
+        # Display logs
+        st.code(logs, language='text', line_numbers=False)
+        
+        # Log statistics
+        total_lines = len(logs.split('\n')) if logs.strip() else 0
+        st.caption(f"Showing {total_lines} log lines")
+        
+    else:
+        st.error("Could not fetch logs. Make sure Docker Compose is running.")
+        if result.stderr:
+            st.code(result.stderr, language='text')
 
 # Footer
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center'>
-    <p>Feature Detection API Dashboard | Built with Streamlit</p>
-    <p>🔍 Production-Ready MLOps Service</p>
+    <p>Feature Detection</p>
 </div>
 """, unsafe_allow_html=True)
 

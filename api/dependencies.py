@@ -7,13 +7,6 @@ Dependencies:
     - FeatureDetector: Feature detection model (singleton)
     - CacheService: Redis cache client
     - Services: Business logic services
-
-Example Usage:
-    @app.get("/predict")
-    async def predict(
-        service: FeatureService = Depends(get_feature_service)
-    ):
-        return await service.detect_features(...)
 """
 
 import uuid

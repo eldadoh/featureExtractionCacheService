@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 API Demo Script - Test feature detection with local images.
 
@@ -26,14 +25,20 @@ class APIDemo:
         self.results: List[Dict] = []
     
     def get_redis_stats(self) -> Dict:
-        """Get Redis statistics."""
+        """Get Redis statistics (API-level counters only)."""
         info = self.redis_client.info()
+        
+        # Get API-specific cache counters
+        hits = int(self.redis_client.get('api:cache:hits') or 0)
+        misses = int(self.redis_client.get('api:cache:misses') or 0)
+        total_ops = hits + misses
+        
         return {
             "keys": self.redis_client.dbsize(),
             "memory_mb": round(info['used_memory'] / (1024 * 1024), 2),
-            "hits": info.get('keyspace_hits', 0),
-            "misses": info.get('keyspace_misses', 0),
-            "hit_rate": round(info.get('keyspace_hits', 0) / max(1, info.get('keyspace_hits', 0) + info.get('keyspace_misses', 0)) * 100, 1)
+            "hits": hits,
+            "misses": misses,
+            "hit_rate": round((hits / total_ops * 100) if total_ops > 0 else 0, 1)
         }
     
     def process_image(self, image_path: Path, request_id: str) -> Dict:
@@ -67,18 +72,18 @@ class APIDemo:
     def run_demo(self, image_paths: List[Path], runs: int = 15):
         """Run demo with multiple images and runs."""
         print("=" * 80)
-        print("🚀 Feature Detection API Demo")
+        print("Feature Detection API Demo")
         print("=" * 80)
         
         # Initial Redis stats
-        print(f"\n📊 Initial Redis Stats:")
+        print(f"\nInitial Redis Stats:")
         stats = self.get_redis_stats()
         print(f"   Keys: {stats['keys']} | Memory: {stats['memory_mb']}MB | Hit Rate: {stats['hit_rate']}%")
         
         # Process images
         for run in range(1, runs + 1):
             print(f"\n{'─' * 80}")
-            print(f"🔄 Run #{run} - {'Cache MISS expected' if run == 1 else 'Cache HIT expected'}")
+            print(f"Run #{run} - {'Cache MISS expected' if run == 1 else 'Cache HIT expected'}")
             print(f"{'─' * 80}")
             
             for i, img_path in enumerate(image_paths, 1):
@@ -87,8 +92,8 @@ class APIDemo:
                 self.results.append(result)
                 
                 # Display result
-                cache_icon = "💾" if result['cached'] else "🔄"
-                status_icon = "✅" if result['status'] == 200 else "❌"
+                cache_icon = "[CACHED]" if result['cached'] else "[PROCESS]"
+                status_icon = "[OK]" if result['status'] == 200 else "[ERROR]"
                 
                 print(f"{status_icon} {result['image']:25} | "
                       f"Keypoints: {result['keypoints']:4} | "
@@ -97,11 +102,11 @@ class APIDemo:
         
         # Final stats
         print(f"\n{'=' * 80}")
-        print("📈 Final Results")
+        print("Final Results")
         print(f"{'=' * 80}")
         
         stats = self.get_redis_stats()
-        print(f"\n📊 Redis Stats:")
+        print(f"\nRedis Stats:")
         print(f"   Cached Keys: {stats['keys']}")
         print(f"   Memory Used: {stats['memory_mb']}MB")
         print(f"   Cache Hits: {stats['hits']}")
@@ -117,13 +122,13 @@ class APIDemo:
             avg_miss = sum(r['api_time_ms'] for r in cache_misses) / len(cache_misses)
             speedup = avg_miss / avg_hit
             
-            print(f"\n⚡ Performance:")
+            print(f"\nPerformance:")
             print(f"   Cache Miss Avg: {avg_miss:6.1f}ms")
             print(f"   Cache Hit Avg:  {avg_hit:6.1f}ms")
-            print(f"   Speedup: {speedup:.1f}x faster with cache! 🚀")
+            print(f"   Speedup: {speedup:.1f}x faster with cache!")
         
         print(f"\n{'=' * 80}")
-        print(f"✅ Demo Complete! Processed {len(self.results)} requests")
+        print(f"Demo Complete! Processed {len(self.results)} requests")
         print(f"{'=' * 80}\n")
     
     def check_health(self) -> bool:
@@ -145,12 +150,12 @@ def main():
     demo = APIDemo(api_url=args.api)
     
     # Check API health
-    print("🔍 Checking API health...")
+    print("Checking API health...")
     if not demo.check_health():
-        print("❌ API is not responding. Make sure it's running:")
+        print("API is not responding. Make sure it's running:")
         print("   docker-compose up -d")
         return
-    print("✅ API is healthy!\n")
+    print("API is healthy!\n")
     
     # Find images
     if args.image:
@@ -160,7 +165,7 @@ def main():
         images = list(data_dir.glob('*.tif')) + list(data_dir.glob('*.png')) + list(data_dir.glob('*.bmp')) + list(data_dir.glob('*.jpg'))
     
     if not images:
-        print("❌ No images found in data/images/")
+        print("No images found in data/images/")
         return
     
     # Run demo

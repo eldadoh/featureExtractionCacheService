@@ -1,6 +1,6 @@
 # Installation Guide
 
-## 📦 Installation Options
+##  Installation Options
 
 ### Option 1: Production Deployment (Docker Compose - Recommended)
 
@@ -56,7 +56,7 @@ python tools/demo_api.py --runs 5
 
 ---
 
-## 📋 Requirements Files
+##  Requirements Files
 
 ### `requirements.txt` (Production)
 ```
@@ -102,7 +102,7 @@ streamlit==1.39.0
 
 ---
 
-## 🚀 Quick Start by Use Case
+##  Quick Start by Use Case
 
 ### Use Case 1: Just Run the API
 ```bash
@@ -151,7 +151,7 @@ python tools/demo_api.py --runs 10
 
 ---
 
-## 🔧 Verifying Installation
+##  Verifying Installation
 
 ### Check Production Dependencies
 ```bash
@@ -167,7 +167,7 @@ pip list | grep -E "pytest|locust|streamlit|httpx"
 
 ---
 
-## 📊 Dependency Size Comparison
+##  Dependency Size Comparison
 
 | Environment | Dependencies | Approx Size | Use Case |
 |-------------|--------------|-------------|----------|
@@ -226,7 +226,7 @@ voyage81_features_api_service/
 
 ---
 
-## 🎯 Best Practices
+##  Best Practices
 
 1. **Production:** Always use Docker Compose (uses `requirements.txt`)
 2. **Development:** Install `requirements-dev.txt` in virtual environment

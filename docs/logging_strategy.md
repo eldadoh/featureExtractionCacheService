@@ -51,12 +51,12 @@ API Request
 
 ### Advantages
 
-✅ Zero infrastructure cost  
-✅ High performance (async, non-blocking)  
-✅ Automatic rotation  
-✅ Searchable (jq, grep, ELK)  
-✅ Cloud integration (CloudWatch, Stackdriver)  
-✅ No database load  
+ Zero infrastructure cost  
+ High performance (async, non-blocking)  
+ Automatic rotation  
+ Searchable (jq, grep, ELK)  
+ Cloud integration (CloudWatch, Stackdriver)  
+ No database load  
 
 ### Configuration
 
@@ -101,16 +101,16 @@ Use when you need:
 ### What to Store
 
 **DON'T STORE:**
-❌ Complete request payloads  
-❌ Image data  
-❌ Detailed logs  
-❌ Stack traces  
+ Complete request payloads  
+ Image data  
+ Detailed logs  
+ Stack traces  
 
 **DO STORE:**
-✅ Request metadata (ID, timestamp)  
-✅ Processing results (keypoints, cached)  
-✅ Performance metrics (latency)  
-✅ Business data (image_hash)  
+ Request metadata (ID, timestamp)  
+ Processing results (keypoints, cached)  
+ Performance metrics (latency)  
+ Business data (image_hash)  
 
 ---
 
@@ -139,14 +139,14 @@ Layer 3: Database (Optional)
 
 | Requirement | Docker Logs | Redis | PostgreSQL |
 |-------------|-------------|-------|------------|
-| Request debugging | ✅ Primary | ✅ Recent | ❌ |
-| Performance monitoring | ✅ Primary | ✅ Fast | ❌ |
-| Error tracking | ✅ Primary | ❌ | ❌ |
-| Recent history (7 days) | ✅ Yes | ✅ Fast | ❌ |
-| Long-term storage | ⚠️ Limited | ❌ | ✅ Yes |
-| Business analytics | ❌ | ❌ | ✅ Yes |
-| Real-time metrics | ✅ Yes | ✅ Fast | ❌ |
-| Cost | ✅ $0 | ✅ Included | ❌ +$20/mo |
+| Request debugging |  Primary |  Recent |  |
+| Performance monitoring |  Primary |  Fast |  |
+| Error tracking |  Primary |  |  |
+| Recent history (7 days) |  Yes |  Fast |  |
+| Long-term storage |  Limited |  |  Yes |
+| Business analytics |  |  |  Yes |
+| Real-time metrics |  Yes |  Fast |  |
+| Cost |  $0 |  Included |  +$20/mo |
 
 ---
 
@@ -155,7 +155,7 @@ Layer 3: Database (Optional)
 ### Good Example
 
 ```python
-# ✅ GOOD: Use keyword arguments
+#  GOOD: Use keyword arguments
 logger.info(
     "Request completed",
     request_id=request_id,
@@ -168,7 +168,7 @@ logger.info(
 ### Bad Example
 
 ```python
-# ❌ BAD: String concatenation
+#  BAD: String concatenation
 logger.info(f"Request {request_id} completed in {time}ms")
 ```
 

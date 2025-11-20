@@ -1,4 +1,4 @@
-# 🛠️ Development Tools
+# Development Tools
 
 This directory contains development and testing utilities for the Feature Detection API.
 
@@ -11,7 +11,7 @@ This directory contains development and testing utilities for the Feature Detect
 
 ---
 
-## 📋 Prerequisites
+##  Prerequisites
 
 These tools require **development dependencies**. Install them first:
 
@@ -27,18 +27,18 @@ pip install -r requirements-dev.txt
 
 ---
 
-## 1️⃣ Demo API Script (`demo_api.py`)
+## Demo API Script (`demo_api.py`)
 
 ### Purpose
 Command-line utility to demonstrate the API's caching capabilities and performance.
 
 ### Features
-- ✅ Automatic health check
-- ✅ Process multiple images across multiple runs
-- ✅ Display cache hit/miss status
-- ✅ Show performance metrics
-- ✅ Redis statistics (keys, memory, hit rate)
-- ✅ Calculate cache speedup
+-  Automatic health check
+-  Process multiple images across multiple runs
+-  Display cache hit/miss status
+-  Show performance metrics
+-  Redis statistics (keys, memory, hit rate)
+-  Calculate cache speedup
 
 ### Usage
 
@@ -69,68 +69,68 @@ python tools/demo_api.py --api http://api.example.com:8080 --runs 3
 ### Example Output
 
 ```
-🔍 Checking API health...
-✅ API is healthy!
+ Checking API health...
+ API is healthy!
 
 ================================================================================
-🚀 Feature Detection API Demo
+ Feature Detection API Demo
 ================================================================================
 
-📊 Initial Redis Stats:
+ Initial Redis Stats:
    Keys: 0 | Memory: 0.12MB | Hit Rate: 0.0%
 
 ────────────────────────────────────────────────────────────────────────────────
-🔄 Run #1 - Cache MISS expected
+ Run #1 - Cache MISS expected
 ────────────────────────────────────────────────────────────────────────────────
-✅ lena_color_256.tif        | Keypoints: 1247 | 🔄 PROCESSED  | Time: 11245.3ms
-✅ cameraman.tif             | Keypoints:  512 | 🔄 PROCESSED  | Time: 10987.2ms
+ lena_color_256.tif        | Keypoints: 1247 |  PROCESSED  | Time: 11245.3ms
+ cameraman.tif             | Keypoints:  512 |  PROCESSED  | Time: 10987.2ms
 
 ────────────────────────────────────────────────────────────────────────────────
-🔄 Run #2 - Cache HIT expected
+ Run #2 - Cache HIT expected
 ────────────────────────────────────────────────────────────────────────────────
-✅ lena_color_256.tif        | Keypoints: 1247 | 💾 CACHED    | Time:    12.5ms
-✅ cameraman.tif             | Keypoints:  512 | 💾 CACHED    | Time:     9.3ms
+ lena_color_256.tif        | Keypoints: 1247 |  CACHED    | Time:    12.5ms
+ cameraman.tif             | Keypoints:  512 |  CACHED    | Time:     9.3ms
 
 ================================================================================
-📈 Final Results
+ Final Results
 ================================================================================
 
-📊 Redis Stats:
+ Redis Stats:
    Cached Keys: 2
    Memory Used: 0.15MB
    Cache Hits: 2
    Cache Misses: 2
    Hit Rate: 50.0%
 
-⚡ Performance:
+ Performance:
    Cache Miss Avg: 11116.3ms
    Cache Hit Avg:     10.9ms
-   Speedup: 1019.8x faster with cache! 🚀
+   Speedup: 1019.8x faster with cache! 
 
 ================================================================================
-✅ Demo Complete! Processed 4 requests
+ Demo Complete! Processed 4 requests
 ================================================================================
 ```
 
 ### Key Metrics Shown
 - **Keypoints**: Number of SIFT features detected
-- **Cache Status**: HIT (💾) or MISS (🔄)
+- **Cache Status**: HIT () or MISS ()
 - **Processing Time**: API processing latency
 - **Redis Stats**: Cache size, memory, hit rate
 - **Speedup**: Performance improvement with caching
 
 ---
 
-## 2️⃣ Streamlit Dashboard (`streamlit_app.py`)
+## Streamlit Dashboard (`streamlit_app.py`)
 
 ### Purpose
 Interactive web dashboard for monitoring and testing the Feature Detection API.
 
 ### Features
-- 📸 **Single Image Upload & Test**
-- 🚀 **Batch Processing** (run demo script from UI)
-- 💾 **Redis Browser** (view/delete keys, monitor stats)
-- 📊 **Logs & Health** (Docker logs, API health, metrics)
+-  **Single Image Upload & Test**
+-  **Batch Processing** (run demo script from UI)
+-  **Redis Browser** (view/delete keys, monitor stats)
+-  **Logs & Health** (Docker logs, API health, metrics)
 
 ### Usage
 
@@ -144,7 +144,7 @@ Dashboard opens automatically at `http://localhost:8501`
 
 ### Tabs Overview
 
-#### Tab 1: 📸 Single Image Detection
+#### Tab 1:  Single Image Detection
 - Upload any image (TIF, PNG, JPG, BMP)
 - Click "Detect Features"
 - View results instantly:
@@ -156,7 +156,7 @@ Dashboard opens automatically at `http://localhost:8501`
 
 **Use Case**: Quick testing of individual images
 
-#### Tab 2: 🚀 Batch Demo
+#### Tab 2:  Batch Demo
 - Configure number of images
 - Set runs per image (1-20)
 - Click "Run Batch Demo"
@@ -164,7 +164,7 @@ Dashboard opens automatically at `http://localhost:8501`
 
 **Use Case**: Performance benchmarking and load testing
 
-#### Tab 3: 💾 Redis Browser
+#### Tab 3:  Redis Browser
 - View Redis statistics:
   - Total keys
   - Memory used
@@ -177,7 +177,7 @@ Dashboard opens automatically at `http://localhost:8501`
 
 **Use Case**: Cache management and debugging
 
-#### Tab 4: 📊 Logs & Stats
+#### Tab 4:  Logs & Stats
 - Check API health status
 - View Docker logs (last 50 lines)
 - Monitor cache performance
@@ -187,15 +187,15 @@ Dashboard opens automatically at `http://localhost:8501`
 
 ### Dashboard Features
 
-✅ **Real-time updates**: Refresh button for logs and stats  
-✅ **Interactive**: Upload, browse, delete, refresh  
-✅ **Visual**: Metrics, charts, status indicators  
-✅ **Minimal**: Single file, clean interface  
-✅ **Production-ready**: Connects to real services  
+ **Real-time updates**: Refresh button for logs and stats  
+ **Interactive**: Upload, browse, delete, refresh  
+ **Visual**: Metrics, charts, status indicators  
+ **Minimal**: Single file, clean interface  
+ **Production-ready**: Connects to real services  
 
 ---
 
-## 🎯 Common Workflows
+##  Common Workflows
 
 ### Workflow 1: Test Cache Performance
 ```bash
@@ -234,7 +234,7 @@ streamlit run tools/streamlit_app.py
 
 ---
 
-## 🔧 Configuration
+##  Configuration
 
 Both tools use default localhost configuration. To change:
 
@@ -290,7 +290,7 @@ streamlit run tools/streamlit_app.py --server.port 8502
 
 ---
 
-## 📊 Performance Expectations
+##  Performance Expectations
 
 ### Demo Script
 - **First run (cache miss)**: 10-15 seconds per image
@@ -337,14 +337,14 @@ streamlit run tools/streamlit_app.py --server.port 8502
 
 ---
 
-## ✨ Summary
+##  Summary
 
 These tools are **development utilities** that:
-- ✅ Demonstrate API capabilities
-- ✅ Monitor production services
-- ✅ Aid in debugging and testing
-- ✅ Provide interactive interfaces
-- ✅ Follow production code quality standards
+-  Demonstrate API capabilities
+-  Monitor production services
+-  Aid in debugging and testing
+-  Provide interactive interfaces
+-  Follow production code quality standards
 
 **Not included in production Docker image** - they're for local development and demos only!
 

@@ -1,4 +1,4 @@
-# 🚀 Feature Detection API Service
+#  Feature Detection API Service
 
 Production-ready, high-performance API for SIFT feature detection in images with Redis caching.
 
@@ -7,18 +7,18 @@ Production-ready, high-performance API for SIFT feature detection in images with
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)](https://fastapi.tiangolo.com/)
 [![Redis](https://img.shields.io/badge/Redis-7.2-red)](https://redis.io/)
 
-## ✨ Features
+##  Features
 
-- ⚡ **Async Processing**: Handles 100+ concurrent requests/second
-- 💾 **Intelligent Caching**: Redis-based result caching (sub-20ms cache hits)
-- 🔍 **SIFT Algorithm**: Robust keypoint and descriptor extraction
-- 📊 **Production Ready**: Docker, health checks, structured logging
-- 🛡️ **Error Handling**: Comprehensive validation and error messages
-- 📈 **Scalable**: Horizontal and vertical scaling support
+-  **Async Processing**: Handles 100+ concurrent requests/second
+-  **Intelligent Caching**: Redis-based result caching (sub-20ms cache hits)
+-  **SIFT Algorithm**: Robust keypoint and descriptor extraction
+-  **Production Ready**: Docker, health checks, structured logging
+-  **Error Handling**: Comprehensive validation and error messages
+-  **Scalable**: Horizontal and vertical scaling support
 - 🧪 **Well Tested**: Unit, integration, and load tests
-- 🏗️ **SOLID Principles**: Clean architecture, dependency injection
+- **SOLID Principles**: Clean architecture, dependency injection
 
-## 📋 Quick Start
+##  Quick Start
 
 ```bash
 # Start services
@@ -47,7 +47,7 @@ streamlit run tools/streamlit_app.py
 - **[Project Summary](docs/PROJECT_SUMMARY.md)** - Complete overview
 - **[API Docs](http://localhost:8000/docs)** - Interactive Swagger UI
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 Client → FastAPI (4 workers) → Feature Detector (SIFT)
@@ -62,7 +62,7 @@ Client → FastAPI (4 workers) → Feature Detector (SIFT)
 - Cache Miss: 300-500ms
 - Throughput: 100+ req/s (4 workers, 80% cache hit)
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
@@ -74,7 +74,7 @@ Client → FastAPI (4 workers) → Feature Detector (SIFT)
 | Containerization | Docker + Compose | Deployment |
 | Testing | Pytest + Locust | Unit/integration/load tests |
 
-## 📦 Project Structure
+##  Project Structure
 
 ```
 voyage81_features_api_service/
@@ -101,7 +101,7 @@ docker-compose exec api pytest tests/integration -v
 locust -f tests/load/test_load.py --host=http://localhost:8000
 ```
 
-## 📊 Monitoring
+##  Monitoring
 
 ```bash
 # View logs
@@ -114,7 +114,7 @@ docker exec -it feature-api-redis redis-cli INFO stats
 curl http://localhost:8000/health | jq .
 ```
 
-## 🔧 Configuration
+##  Configuration
 
 Edit `.env` or set environment variables:
 
@@ -133,7 +133,7 @@ LOG_LEVEL=INFO
 LOG_FORMAT=json
 ```
 
-## 🚀 Scaling
+##  Scaling
 
 ### Horizontal Scaling
 ```bash
@@ -143,7 +143,7 @@ docker-compose up -d --scale api=8
 ### Production Deployment
 See [docs/deployment.md](docs/deployment.md) for Kubernetes, AWS, GCP deployment guides.
 
-## 📈 Performance
+##  Performance
 
 | Scenario | Latency | Throughput |
 |----------|---------|------------|
@@ -153,22 +153,22 @@ See [docs/deployment.md](docs/deployment.md) for Kubernetes, AWS, GCP deployment
 
 ## 🏆 Best Practices Implemented
 
-✅ **SOLID Principles**: Dependency inversion, single responsibility  
-✅ **Type Hints**: Full type safety throughout codebase  
-✅ **Async/Await**: Non-blocking I/O for high concurrency  
-✅ **Structured Logging**: JSON logs with correlation IDs  
-✅ **Error Handling**: Custom exceptions with proper HTTP codes  
-✅ **Input Validation**: Pydantic schemas for requests/responses  
-✅ **Caching Strategy**: Content-based hashing with LRU eviction  
-✅ **Health Checks**: Kubernetes-compatible probes  
-✅ **Security**: Non-root user, input validation, size limits  
-✅ **Testing**: Unit, integration, and load tests  
+ **SOLID Principles**: Dependency inversion, single responsibility  
+ **Type Hints**: Full type safety throughout codebase  
+ **Async/Await**: Non-blocking I/O for high concurrency  
+ **Structured Logging**: JSON logs with correlation IDs  
+ **Error Handling**: Custom exceptions with proper HTTP codes  
+ **Input Validation**: Pydantic schemas for requests/responses  
+ **Caching Strategy**: Content-based hashing with LRU eviction  
+ **Health Checks**: Kubernetes-compatible probes  
+ **Security**: Non-root user, input validation, size limits  
+ **Testing**: Unit, integration, and load tests  
 
 ## 🤝 Contributing
 
 This is an interview project demonstrating MLOps best practices.
 
-## 📝 License
+##  License
 
 MIT License
 
@@ -178,5 +178,5 @@ Senior MLOps Engineer Candidate
 
 ---
 
-**Built with ❤️ following production-grade practices and SOLID principles**
+**Built with following production-grade practices and SOLID principles**
 

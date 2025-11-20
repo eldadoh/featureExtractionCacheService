@@ -226,6 +226,52 @@ class RedisCacheService:
             logger.warning("Cache exists check failed", key=key, error=str(e))
             return False
     
+    async def increment(self, key: str, amount: int = 1) -> int | None:
+        """
+        Increment a counter in Redis cache.
+        
+        Args:
+            key: Cache key (counter name)
+            amount: Amount to increment by (default: 1)
+        
+        Returns:
+            New counter value or None if operation fails
+        """
+        if not self._connected or not self.client:
+            return None
+        
+        try:
+            result = await self.client.incrby(key, amount)
+            logger.debug("Cache counter incremented", key=key, amount=amount, new_value=result)
+            return result
+            
+        except RedisError as e:
+            logger.warning("Cache increment failed", key=key, error=str(e))
+            return None
+    
+    async def get_counter(self, key: str) -> int:
+        """
+        Get counter value from Redis cache.
+        
+        Args:
+            key: Cache key (counter name)
+        
+        Returns:
+            Counter value or 0 if key doesn't exist
+        """
+        if not self._connected or not self.client:
+            return 0
+        
+        try:
+            value = await self.client.get(key)
+            if value is None:
+                return 0
+            return int(value)
+            
+        except (RedisError, ValueError) as e:
+            logger.warning("Cache counter get failed", key=key, error=str(e))
+            return 0
+    
     async def ping(self) -> bool:
         """
         Check Redis connection health.

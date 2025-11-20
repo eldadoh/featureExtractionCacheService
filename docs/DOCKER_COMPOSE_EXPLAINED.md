@@ -10,8 +10,8 @@ The `uploads` folder is a **temporary storage location** for images during featu
 #### 1. **OpenCV File Path Requirement**
 ```python
 # OpenCV requires a file path, not in-memory bytes
-image = cv2.imread(image_path)  # ✅ Needs actual file
-# cv2.imread(BytesIO(data))     # ❌ Doesn't work
+image = cv2.imread(image_path)  #  Needs actual file
+# cv2.imread(BytesIO(data))     #  Doesn't work
 ```
 
 #### 2. **Thread Executor Limitation**
@@ -125,12 +125,12 @@ logging:
 - `splunk`: Splunk logging
 
 **Why json-file?**
-- ✅ Built-in, no setup required
-- ✅ Works with `docker logs` command
-- ✅ Easy to parse programmatically
-- ✅ Rotates automatically
-- ❌ Limited query capabilities (no search)
-- ❌ Not centralized (per-container)
+-  Built-in, no setup required
+-  Works with `docker logs` command
+-  Easy to parse programmatically
+-  Rotates automatically
+-  Limited query capabilities (no search)
+-  Not centralized (per-container)
 
 ---
 
@@ -165,10 +165,10 @@ time_to_fill = 262,144 / 300 = 873 seconds ≈ 14.5 minutes
 ```
 
 **Why 50MB?**
-- ✅ Balance between rotation frequency and manageability
-- ✅ Easy to download/analyze (not too large)
-- ✅ Holds ~14-15 minutes of high-traffic logs
-- ⚠️ Adjust based on your traffic: 10MB for low, 100MB for very high
+-  Balance between rotation frequency and manageability
+-  Easy to download/analyze (not too large)
+-  Holds ~14-15 minutes of high-traffic logs
+-  Adjust based on your traffic: 10MB for low, 100MB for very high
 
 ---
 
@@ -204,10 +204,10 @@ Total storage: 250MB
 ```
 
 **Why 5 files?**
-- ✅ Retains 70 minutes of high-traffic logs
-- ✅ Manageable storage (250MB)
-- ✅ Enough for debugging recent issues
-- ✅ Auto-cleanup prevents disk fill-up
+-  Retains 70 minutes of high-traffic logs
+-  Manageable storage (250MB)
+-  Enough for debugging recent issues
+-  Auto-cleanup prevents disk fill-up
 
 **Production recommendations:**
 - **Development**: `max-file: 3` (save disk space)
@@ -250,7 +250,7 @@ service:"feature-api" AND log:ERROR
 
 ---
 
-## 🔄 **Comparison: Redis vs API Logging Config**
+##  **Comparison: Redis vs API Logging Config**
 
 ### Redis (Simpler, Less Traffic)
 ```yaml
@@ -278,7 +278,7 @@ api:
 
 ---
 
-## 🎯 **Production Recommendations**
+##  **Production Recommendations**
 
 ### Current Setup (Good for Development/Staging)
 ```yaml
@@ -288,8 +288,8 @@ logging:
     max-size: "50m"
     max-file: "5"
 ```
-✅ **Pros**: Simple, built-in, works immediately
-❌ **Cons**: Not centralized, limited search, manual access
+ **Pros**: Simple, built-in, works immediately
+ **Cons**: Not centralized, limited search, manual access
 
 ### Production Setup (Centralized Logging)
 ```yaml
@@ -301,9 +301,9 @@ logging:
     awslogs-stream: "production"
     awslogs-create-group: "true"
 ```
-✅ **Pros**: Centralized, searchable, long-term retention
-✅ **Pros**: Alerting, dashboards, analytics
-❌ **Cons**: Requires setup, costs money
+ **Pros**: Centralized, searchable, long-term retention
+ **Pros**: Alerting, dashboards, analytics
+ **Cons**: Requires setup, costs money
 
 ### Hybrid Approach (Best Practice)
 ```yaml
@@ -323,7 +323,7 @@ logging:
 
 ---
 
-## 📊 **Monitoring Log Files**
+##  **Monitoring Log Files**
 
 ### Check current log size:
 ```bash
@@ -386,10 +386,10 @@ docker logs feature-api-service --follow
 ---
 
 **Summary**: 
-- ✅ **Uploads folder**: Necessary for OpenCV file-based processing
-- ✅ **json-file driver**: Simple, built-in, works with `docker logs`
-- ✅ **50MB max-size**: Balances rotation frequency and manageability
-- ✅ **5 max-file**: Retains 70 minutes of logs, 250MB storage
-- ✅ **Labels**: Enable service identification and filtering
+-  **Uploads folder**: Necessary for OpenCV file-based processing
+-  **json-file driver**: Simple, built-in, works with `docker logs`
+-  **50MB max-size**: Balances rotation frequency and manageability
+-  **5 max-file**: Retains 70 minutes of logs, 250MB storage
+-  **Labels**: Enable service identification and filtering
 
 

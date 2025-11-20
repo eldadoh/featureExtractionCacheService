@@ -104,7 +104,7 @@
 # def on_test_start(environment, **kwargs):
 #     """Called when load test starts."""
 #     print("\n" + "="*50)
-#     print("🚀 Starting Load Test")
+#     print("Starting Load Test")
 #     print("="*50)
 
 
@@ -112,6 +112,6 @@
 # def on_test_stop(environment, **kwargs):
 #     """Called when load test stops."""
 #     print("\n" + "="*50)
-#     print("✅ Load Test Complete")
+#     print("Load Test Complete")
 #     print("="*50)
 

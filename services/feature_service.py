@@ -127,6 +127,9 @@ class FeatureService:
                     cached = True
                     processing_time = (time.perf_counter() - start_time) * 1000
                     
+                    # Increment API cache hit counter
+                    await self.cache.increment("api:cache:hits")
+                    
                     logger.info(
                         "Cache hit",
                         request_id=request_id,
@@ -141,6 +144,10 @@ class FeatureService:
                     }
             
             # Step 4: Process image (cache miss)
+            # Increment API cache miss counter
+            if self.settings.cache_enabled:
+                await self.cache.increment("api:cache:misses")
+            
             logger.info("Processing image", request_id=request_id, file_path=file_path)
             detection_start = time.perf_counter()
             
