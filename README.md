@@ -1,25 +1,14 @@
 # Feature Detection API Service
 
-A production-ready, scalable FastAPI service for detecting SIFT features in images with Redis caching.
-
-## Quick Start
-
-### Prerequisites
-- Docker & Docker Compose
-- Python 3.11+ (for local development)
-
 ### Run with Docker Compose
 
 ```bash
-# Start all services
-docker-compose up -d
 
-# Check service health
-curl http://localhost:8000/health
+docker-compose up -d
 
 # Detect features in an image
 curl -X POST http://localhost:8000/api/v1/features/detect \
-  -F "image=@path/to/your/image.jpg"
+  -F "image=@data/images/lena_color_256.tif"
 
 # View API documentation
 open http://localhost:8000/docs
@@ -47,8 +36,6 @@ streamlit run tools/streamlit_app.py
 ```bash
 docker-compose down
 ```
-
-## Architecture
 
 ### System Overview
 
