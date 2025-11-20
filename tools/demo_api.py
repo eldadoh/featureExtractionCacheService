@@ -1,9 +1,7 @@
 """
-API Demo Script - Test feature detection with local images.
-
 Usage:
     python tools/demo_api.py
-    python tools/demo_api.py --runs 2
+    python tools/demo_api.py --n_images 3 --runs 5 
     python tools/demo_api.py --image data/images/lena_color_256.tif
 """
 
@@ -78,7 +76,7 @@ class APIDemo:
         # Initial Redis stats
         print(f"\nInitial Redis Stats:")
         stats = self.get_redis_stats()
-        print(f"   Keys: {stats['keys']} | Memory: {stats['memory_mb']}MB | Hit Rate: {stats['hit_rate']}%")
+        print(f"   Keys: {stats['keys']} | Memory: {stats['memory_mb']}MB")
         
         # Process images
         for run in range(1, runs + 1):
@@ -109,9 +107,6 @@ class APIDemo:
         print(f"\nRedis Stats:")
         print(f"   Cached Keys: {stats['keys']}")
         print(f"   Memory Used: {stats['memory_mb']}MB")
-        print(f"   Cache Hits: {stats['hits']}")
-        print(f"   Cache Misses: {stats['misses']}")
-        print(f"   Hit Rate: {stats['hit_rate']}%")
         
         # Performance summary
         cache_hits = [r for r in self.results if r['cached']]
@@ -127,9 +122,7 @@ class APIDemo:
             print(f"   Cache Hit Avg:  {avg_hit:6.1f}ms")
             print(f"   Speedup: {speedup:.1f}x faster with cache!")
         
-        print(f"\n{'=' * 80}")
-        print(f"Demo Complete! Processed {len(self.results)} requests")
-        print(f"{'=' * 80}\n")
+        print(f"\n{'=' * 80}\n")
     
     def check_health(self) -> bool:
         """Check API health."""
@@ -144,6 +137,7 @@ def main():
     parser = argparse.ArgumentParser(description="Demo script for Feature Detection API")
     parser.add_argument('--image', type=str, help='Specific image to process')
     parser.add_argument('--runs', type=int, default=2, help='Number of runs (default: 2)')
+    parser.add_argument('--n_images', type=int, default=3, help='Number of images to process (default: 3)')
     parser.add_argument('--api', type=str, default='http://localhost:8000', help='API URL')
     args = parser.parse_args()
     
@@ -163,6 +157,10 @@ def main():
     else:
         data_dir = Path('data/images')
         images = list(data_dir.glob('*.tif')) + list(data_dir.glob('*.png')) + list(data_dir.glob('*.bmp')) + list(data_dir.glob('*.jpg'))
+        
+        # Limit number of images
+        if len(images) > args.n_images:
+            images = images[:args.n_images]
     
     if not images:
         print("No images found in data/images/")

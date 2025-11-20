@@ -160,7 +160,7 @@ with tab2:
                     
                     # Run subprocess with streaming output (unbuffered)
                     process = subprocess.Popen(
-                        [sys.executable, '-u', 'tools/demo_api.py', '--runs', str(num_runs)],
+                        [sys.executable, '-u', 'tools/demo_api.py', '--runs', str(num_runs), '--n_images', str(num_images)],
                         stdout=subprocess.PIPE,
                         stderr=subprocess.STDOUT,
                         text=True,
@@ -169,7 +169,7 @@ with tab2:
                     )
                     
                     # Stream output line by line
-                    total_operations = len(images) * num_runs
+                    total_operations = num_images * num_runs
                     completed = 0
                     
                     for line in process.stdout:
