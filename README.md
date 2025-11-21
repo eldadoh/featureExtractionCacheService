@@ -1,6 +1,6 @@
 # Feature Detection API Service
 
-### Run with Docker Compose
+## Run with Docker Compose
 
 ```bash
 
@@ -14,7 +14,7 @@ curl -X POST http://localhost:8000/api/v1/features/detect \
 open http://localhost:8000/docs
 ```
 
-### Run Streamlit / CLI Demo
+## Run Streamlit / CLI Demo
 
 ```bash
 # Activate virtual environment
@@ -28,13 +28,13 @@ pip install -r requirements-dev.txt
 streamlit run tools/streamlit_app.py
 ```
 
-### Shutdown
+## Shutdown
 
 ```bash
 docker-compose down -v
 ```
 
-### System Overview
+## System Overview
 
 ```
 ┌─────────────────┐
@@ -54,7 +54,7 @@ docker-compose down -v
 └─────────────────┘
 ```
 
-### Data Flow
+## Data Flow
 
 1. Client uploads image → API validates format/size
 2. API generates SHA256 hash → checks Redis cache
@@ -67,7 +67,7 @@ docker-compose down -v
 
 
 
-### Project Structure
+## Project Structure
 
 ```
 features_api_service/
@@ -103,13 +103,13 @@ features_api_service/
 └── requirements-dev.txt          # Development dependencies
 ```
 
-### Testing
+## Testing
 
 ```
 pytest tests/ -v
 ```
 
-### Configuration
+## Configuration
 
 ```bash
 # Redis Configuration
