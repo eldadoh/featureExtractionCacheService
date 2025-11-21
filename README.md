@@ -14,7 +14,7 @@ curl -X POST http://localhost:8000/api/v1/features/detect \
 open http://localhost:8000/docs
 ```
 
-### Run streamlit / CLI Demo
+### Run Streamlit / CLI Demo
 
 ```bash
 # Activate virtual environment
@@ -115,13 +115,7 @@ source venv/bin/activate
 pytest tests/ -v
 ```
 
-```
-
 ## Configuration
-
-### Environment Variables
-
-Configure the service by setting environment variables or creating a `.env` file:
 
 ```bash
 # Redis Configuration

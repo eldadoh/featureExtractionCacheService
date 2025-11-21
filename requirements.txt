@@ -18,6 +18,5 @@ pydantic-settings==2.5.2
 # Async File I/O
 aiofiles==24.1.0
 
-# Logging & Configuration
-python-dotenv==1.0.1
+# Logging
 structlog==24.4.0
