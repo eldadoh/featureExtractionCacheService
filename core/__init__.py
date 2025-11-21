@@ -1,7 +1,3 @@
-"""
-Core module containing configuration, logging, and exceptions.
-"""
-
 from core.config import settings
 from core.logging_config import get_logger
 from core.exceptions import (

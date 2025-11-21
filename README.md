@@ -28,10 +28,10 @@ pip install -r requirements-dev.txt
 streamlit run tools/streamlit_app.py
 ```
 
-### Stop Services
+### Shutdown
 
 ```bash
-docker-compose down
+docker-compose down -v
 ```
 
 ### System Overview
@@ -104,12 +104,6 @@ features_api_service/
 ```
 
 ## Testing
-
-### Run All Tests
-
-```bash
-# Activate virtual environment
-source venv/bin/activate
 
 # Run tests
 pytest tests/ -v
