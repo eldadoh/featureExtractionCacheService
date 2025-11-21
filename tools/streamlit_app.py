@@ -193,6 +193,18 @@ with tab2:
                     
                     if process.returncode != 0:
                         st.error(f"Process exited with code {process.returncode}")
+            
+            # Clear cache section
+            st.markdown("---")
+            redis_client = get_redis_client()
+            if redis_client:
+                confirm_clear_batch = st.checkbox("I want to clear all cache", key="confirm_clear_batch")
+                if st.button("Clear All Cache", disabled=not confirm_clear_batch, type="primary", key="clear_cache_batch"):
+                    redis_client.flushdb()
+                    st.success("Cache cleared! Refreshing...")
+                    st.rerun()
+            else:
+                st.warning("Cannot connect to Redis")
         else:
             st.warning(f"Data directory not found: {data_dir}")
 

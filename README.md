@@ -14,7 +14,7 @@ curl -X POST http://localhost:8000/api/v1/features/detect \
 open http://localhost:8000/docs
 ```
 
-### Run Demo
+### Run streamlit / CLI Demo
 
 ```bash
 # Activate virtual environment
@@ -24,10 +24,7 @@ source venv/bin/activate  # or `venv\Scripts\activate` on Windows
 # Install dependencies
 pip install -r requirements-dev.txt
 
-# Run API demo
-python tools/demo_api.py --n_images 3 --runs 2
-
-# Run Streamlit dashboard
+# Run Streamlit demo (single / batch runs , redis overview, docker logs)
 streamlit run tools/streamlit_app.py
 ```
 
